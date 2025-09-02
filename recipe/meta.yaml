@@ -10,47 +10,40 @@ source:
   sha256: b91ad7d73e73d21220e69540f20213f2b729a1f9b35c04e9e137eaf28d2214da
 
 build:
-  noarch: python
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv
+  skip: true  # [py<38]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   entry_points:
     - versioningit = versioningit.__main__:main
 
 requirements:
   host:
-    - hatchling
-    - python {{ python_min }}
+    - python
     - pip
+    - hatchling
   run:
-    - python >={{ python_min }}
-    - importlib-metadata >=3.6
+    - python
     - packaging >=17.1
-    - tomli >=1.2,<3.0
+    - importlib-metadata >=3.6  # [py<310]
+    - tomli >=1.2,<3.0  # [py<311]
 
 test:
   requires:
-    - python-build >=0.7.0
-    - editables
-    - git >=2.32
-    - hatchling
-    - mercurial >=5.2
-    - setuptools >=42
     - pip
-    - pydantic >=2.0,<3.0
     - pytest >=7.0
-    - pytest-cov >=3.0
     - pytest-mock >=3.0
-    - wheel
-    - python {{ python_min }}
+    - python-build >=0.7.0
+    - pydantic >=2.0,<3.0
+    - editables
+    - hatchling
   source_files:
     - test
-    - tox.ini
   imports:
     - versioningit
   commands:
     - pip check
     - versioningit --help
-    - python -m pytest -vv test
+    - pytest -v test
 
 about:
   home: https://github.com/jwodder/versioningit
@@ -64,6 +57,7 @@ about:
     repository's tags.  Unlike others, it allows easy customization of the
     version format and even lets you easily override the separate functions
     used for version extraction & calculation.
+  doc_url: https://versioningit.readthedocs.io
   dev_url: https://github.com/jwodder/versioningit
 
 extra:
